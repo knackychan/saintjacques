@@ -163,6 +163,30 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
   .rise, .pin, .tile, .toast, .netpin { opacity: 1; }
   .fill { width: 78%; }
 }
+
+/* ── Responsive: portrait / narrow (phones) — stack phone over copy ──────── */
+@media (max-width: 820px), (max-aspect-ratio: 13/16) {
+  .scene { flex-direction: column; gap: 2.4vh; padding: 5vh 6vw;
+    overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .phone, .flipbox { height: 40vh; }
+  .aside { max-width: 92vw; align-items: center; }
+  .aside .copy, .aside .subcopy, .aside .legend { text-align: center !important; }
+  .copy { font-size: clamp(23px, 6.6vw, 40px); }
+  .subcopy { font-size: clamp(14px, 3.6vw, 20px); }
+  .legend { font-size: clamp(13px, 3.4vw, 18px); justify-content: center; }
+  .cards { flex-direction: column; gap: 1.4vh; width: 100%; align-items: stretch; }
+  .card { flex-direction: row; justify-content: center; gap: 14px; padding: 2vh 5vw; }
+  .picto { font-size: clamp(26px, 7vw, 40px); }
+  .mini-cal, .fillbar { max-width: min(88vw, 360px); }
+  .qr { width: clamp(130px, 34vw, 190px); }
+  /* keep full-bleed backgrounds edge-to-edge, not padded */
+  #s1, #s12 { padding: 0; }
+}
+/* Short landscape (phones on their side): cap asset height so copy still fits */
+@media (max-height: 520px) and (min-aspect-ratio: 1/1) {
+  .phone, .flipbox { height: 76vh; }
+  .scene { gap: 3vw; }
+}
 /* END CSS */
 </style>
 </head>
@@ -387,6 +411,101 @@ document.addEventListener('keydown', e => {
 show(0);
 schedule();
 </script>
+<!-- ═══ VIEWER NAV — pull-up touch controls + swipe (public, keep) ═══ -->
+<style>
+#nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5000;
+  display: flex; flex-direction: column; align-items: center;
+  transform: translateY(calc(100% - 34px)); transition: transform .3s ease;
+  pointer-events: none; }
+#nav.open { transform: translateY(0); }
+#nav > * { pointer-events: auto; }
+#navHandle { width: 100%; display: flex; justify-content: center; padding: 12px 0 9px;
+  background: linear-gradient(180deg, transparent, rgba(20,18,16,.66) 70%);
+  border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+#navHandle .grip { width: 46px; height: 5px; border-radius: 999px;
+  background: rgba(250,246,239,.65); display: block; }
+#navPanel { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 4px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  background: rgba(20,18,16,.74); backdrop-filter: blur(8px);
+  font-family: system-ui, sans-serif; }
+#navBtns { display: flex; align-items: center; gap: 20px; }
+#navBtns button { width: 58px; height: 58px; border-radius: 50%; cursor: pointer;
+  border: 1px solid rgba(250,246,239,.22); background: rgba(250,246,239,.08);
+  color: #faf6ef; font-size: 24px; line-height: 1; display: grid; place-items: center;
+  -webkit-tap-highlight-color: transparent; }
+#navBtns button:active { background: rgba(250,246,239,.18); }
+#navPlay { background: #f59e0b; color: #1c1917; border: none; font-size: 20px; }
+#navDots { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 92vw; }
+#navDots i { width: 10px; height: 10px; border-radius: 50%; cursor: pointer;
+  background: rgba(250,246,239,.3); transition: transform .2s, background .2s; }
+#navDots i.on { background: #f59e0b; transform: scale(1.3); }
+@media (min-width: 821px) and (min-aspect-ratio: 13/16) {
+  #nav { opacity: .0; transition: opacity .3s, transform .3s; }
+  #nav:hover, #nav.open { opacity: 1; }   /* desktop: fade the handle in on hover */
+}
+</style>
+<div id="nav">
+  <button id="navHandle" aria-label="Afficher les contrôles"><span class="grip"></span></button>
+  <div id="navPanel">
+    <div id="navBtns">
+      <button id="navPrev" aria-label="Précédent">‹</button>
+      <button id="navPlay" aria-label="Pause">❚❚</button>
+      <button id="navNext" aria-label="Suivant">›</button>
+    </div>
+    <div id="navDots"></div>
+  </div>
+</div>
+<script>
+(() => {
+  const nav = document.getElementById('nav');
+  const handle = document.getElementById('navHandle');
+  const dotsWrap = document.getElementById('navDots');
+  const playBtn = document.getElementById('navPlay');
+  const stage = document.getElementById('stage');
+  const go = n => { idx = (n + SCENES.length) % SCENES.length; show(idx); schedule(); };
+
+  const dots = SCENES.map((s, i) => {
+    const d = document.createElement('i');
+    d.addEventListener('click', () => { go(i); poke(); });
+    dotsWrap.appendChild(d); return d;
+  });
+  document.getElementById('navPrev').addEventListener('click', () => { go(idx - 1); poke(); });
+  document.getElementById('navNext').addEventListener('click', () => { go(idx + 1); poke(); });
+  playBtn.addEventListener('click', () => { paused = !paused; schedule(); sync(); poke(); });
+
+  let collapseT;
+  const open = () => { nav.classList.add('open'); poke(); };
+  const close = () => { nav.classList.remove('open'); clearTimeout(collapseT); };
+  const poke = () => { if (nav.classList.contains('open')) { clearTimeout(collapseT); collapseT = setTimeout(close, 5000); } };
+  handle.addEventListener('click', () => nav.classList.contains('open') ? close() : open());
+
+  function sync() {
+    dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+    playBtn.textContent = paused ? '▶' : '❚❚';
+    playBtn.setAttribute('aria-label', paused ? 'Lecture' : 'Pause');
+  }
+  new MutationObserver(() => {
+    const a = document.querySelector('.scene.active');
+    if (a) { const i = SCENES.findIndex(s => s.id === a.id); if (i >= 0) idx = i; }
+    sync();
+  }).observe(stage, { subtree: true, attributes: true, attributeFilter: ['class'] });
+
+  // Swipe on the deck: left/right = prev/next, up = reveal controls.
+  let sx = 0, sy = 0, st = 0;
+  stage.addEventListener('touchstart', e => {
+    const t = e.changedTouches[0]; sx = t.clientX; sy = t.clientY; st = Date.now();
+  }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy, dt = Date.now() - st;
+    if (dt > 700) return;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) { go(idx + (dx < 0 ? 1 : -1)); }
+    else if (dy < -50 && Math.abs(dy) > Math.abs(dx)) { open(); }
+  }, { passive: true });
+
+  sync();
+})();
+</script>
+<!-- ═══ END VIEWER NAV ═══ -->
 <!-- ═══ DEBUG CONTROLS — TEMPORARY: delete this whole block to remove ═══ -->
 <style>
 #dbg { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 9999;
