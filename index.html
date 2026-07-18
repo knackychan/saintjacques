@@ -166,9 +166,9 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
 
 /* ── Responsive: portrait / narrow (phones) — stack phone over copy ──────── */
 @media (max-width: 820px), (max-aspect-ratio: 13/16) {
-  .scene { flex-direction: column; gap: 2.6vh; padding: 4vh 5vw 176px;
-    overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .phone, .flipbox { height: 54vh; }
+  .scene { flex-direction: column; justify-content: flex-start; gap: 2.4vh;
+    padding: 2.5vh 5vw 148px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .phone, .flipbox { height: 50vh; }
   .aside { max-width: 96vw; align-items: center; }
   .aside .copy, .aside .subcopy, .aside .legend { text-align: center !important; }
   .copy { font-size: clamp(30px, 8.4vw, 54px); }
@@ -180,8 +180,9 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
   .picto { font-size: clamp(32px, 8.4vw, 48px); }
   .mini-cal, .fillbar { max-width: min(92vw, 440px); }
   .qr { width: clamp(160px, 42vw, 230px); }
-  /* full-bleed backgrounds stay edge-to-edge; keep bottom clear for the nav */
-  #s1, #s12 { padding: 0 0 176px; }
+  /* full-bleed backgrounds stay edge-to-edge; content lifted toward the top */
+  #s1, #s12 { padding: 8vh 0 148px; }
+  #s12 .center-stack { align-self: center; justify-content: flex-start; padding-bottom: 0; }
 }
 /* Short landscape (phones on their side): cap asset height so copy still fits */
 @media (max-height: 520px) and (min-aspect-ratio: 1/1) {
