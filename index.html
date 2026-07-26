@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Saint-Jacques — Présentation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dors sur le Chemin — Présentation</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; overflow: hidden; background: #1c1917;
@@ -68,7 +69,7 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
 .pin.fresh { background: var(--green); }
 .pin.today { background: var(--amber); }
 .pin.old { background: var(--gray); }
-.scene.active .pin { animation: pindrop .5s cubic-bezier(.34,1.56,.64,1) both; }
+.scene.active .pin { animation: pindrop .5s cubic-bezier(.22,1,.36,1) both; }
 @keyframes pindrop { from { opacity: 0; transform: translateY(-30px) scale(.3); }
                      to   { opacity: 1; transform: none; } }
 
@@ -93,7 +94,7 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
 
 .badge { position: absolute; transform: translateX(-50%); background: var(--amber);
   color: #fff; font-size: 15px; font-weight: 700; padding: 8px 16px;
-  border-radius: 999px; box-shadow: 0 8px 20px rgba(245,158,11,.4); }
+  border-radius: 999px; box-shadow: 0 8px 20px rgba(0,0,0,.22); }
 
 .flipbox { height: 80vh; flex: none; perspective: 1600px; }
 .flipper { position: relative; height: 100%; transform-style: preserve-3d; }
@@ -105,9 +106,9 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
 
 .toast { position: absolute; top: 6%; left: 50%; width: 78%;
   background: #fff; color: var(--ink); font-size: 15px; font-weight: 600;
-  padding: 12px 16px; border-radius: 14px; border-left: 5px solid var(--amber);
+  padding: 12px 16px; border-radius: 14px;
   box-shadow: 0 12px 30px rgba(0,0,0,.22); opacity: 0; }
-.scene.active .toast { animation: toastin .6s cubic-bezier(.34,1.4,.64,1) .8s both; }
+.scene.active .toast { animation: toastin .6s cubic-bezier(.22,1,.36,1) .8s both; }
 @keyframes toastin { from { opacity: 0; transform: translate(-50%,-40px); }
                      to   { opacity: 1; transform: translate(-50%,0); } }
 
@@ -148,7 +149,7 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
 .netpin { position: absolute; z-index: 2; width: 16px; height: 16px;
   border-radius: 50%; background: var(--amber); border: 3px solid #fff;
   box-shadow: 0 0 0 6px rgba(245,158,11,.25); opacity: 0; }
-.scene.active .netpin { animation: pindrop .5s cubic-bezier(.34,1.56,.64,1) both; }
+.scene.active .netpin { animation: pindrop .5s cubic-bezier(.22,1,.36,1) both; }
 
 .qr { width: clamp(140px, 18vh, 220px); border-radius: 16px;
   background: #fff; padding: 10px; }
@@ -184,6 +185,25 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
   #s1, #s12 { padding: 8vh 0 148px; }
   #s12 .center-stack { align-self: center; justify-content: flex-start; padding-bottom: 0; }
 }
+@media (max-width: 480px) {
+  .scene { padding: 2vh 5vw 108px; gap: 1.8vh; }
+  .phone, .flipbox { height: 46vh; }
+  .aside { gap: 1.5vh; }
+  .copy { font-size: clamp(26px, 7.8vw, 44px); }
+  .legend { gap: 8px; font-size: clamp(13px, 3.8vw, 18px); line-height: 1.2; }
+  .dot { width: 11px; height: 11px; }
+  .subcopy { font-size: clamp(14px, 3.8vw, 18px); }
+  #s1, #s12 { padding: 7vh 0 108px; }
+}
+@media (max-width: 360px) and (max-height: 640px) {
+  .phone, .flipbox { height: 42vh; }
+  .subcopy { display: none; }
+  #s3 .legend:nth-of-type(n+3) { display: none; }
+  #s9 .phone { height: 34vh; }
+  #s9 .mini-cal { gap: 4px; max-width: 288px; }
+  #s9 .tile { font-size: 12px; }
+  #s9 .tile:nth-child(n+15), #s9 .fillbar { display: none; }
+}
 /* Short landscape (phones on their side): cap asset height so copy still fits */
 @media (max-height: 520px) and (min-aspect-ratio: 1/1) {
   .phone, .flipbox { height: 76vh; }
@@ -200,7 +220,7 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
            onerror="this.remove()"></video>
     <div class="scrim"></div>
     <div class="center-stack">
-      <div class="logo rise">Saint-Jacques</div>
+      <div class="logo rise">Dors sur le Chemin</div>
       <h1 class="copy rise" style="animation-delay:.4s">Le Chemin de Compostelle</h1>
     </div>
   </section>
@@ -365,9 +385,9 @@ html, body { height: 100%; overflow: hidden; background: #1c1917;
   </section>
   <section class="scene dark" id="s13">
     <div class="center-stack">
-      <div class="logo rise">Saint-Jacques</div>
+      <div class="logo rise">Dors sur le Chemin</div>
       <h1 class="copy rise" style="animation-delay:.4s">Rejoignez
-        <span class="em">Saint-Jacques</span></h1>
+        <span class="em">Dors sur le Chemin</span></h1>
       <img class="qr breathe rise" src="qr.png" alt="QR code"
            style="animation-delay:.8s" onerror="this.style.display='none'">
     </div>
@@ -432,6 +452,14 @@ schedule();
 #navDots i { width: 14px; height: 14px; border-radius: 50%; cursor: pointer;
   background: rgba(250,246,239,.38); transition: transform .2s, background .2s; }
 #navDots i.on { background: #f59e0b; transform: scale(1.4); }
+@media (max-width: 480px) {
+  #nav { gap: 8px; padding: 10px 12px calc(14px + env(safe-area-inset-bottom, 0px)); }
+  #navBtns { gap: 18px; }
+  #navBtns button { width: 58px; height: 58px; font-size: 28px; }
+  #navPlay { font-size: 24px; }
+  #navDots { gap: 10px; }
+  #navDots i { width: 10px; height: 10px; }
+}
 </style>
 <div id="nav">
   <div id="navBtns">
